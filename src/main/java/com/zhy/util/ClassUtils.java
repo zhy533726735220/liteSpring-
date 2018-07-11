@@ -1,4 +1,4 @@
-package com.zhy.beans.util;
+package com.zhy.util;
 
 public class ClassUtils {
     /**

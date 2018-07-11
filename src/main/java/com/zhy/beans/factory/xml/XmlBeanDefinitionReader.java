@@ -4,7 +4,7 @@ import com.zhy.beans.BeanDefinition;
 import com.zhy.beans.factory.BeanDefinitionStoreException;
 import com.zhy.beans.factory.support.BeanDefinitionRegistry;
 import com.zhy.beans.factory.support.GenericBeanDefinition;
-import com.zhy.beans.util.ClassUtils;
+import com.zhy.util.ClassUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;

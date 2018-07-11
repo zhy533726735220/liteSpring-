@@ -4,7 +4,7 @@ import com.zhy.beans.BeanDefinition;
 import com.zhy.beans.BeansException;
 import com.zhy.beans.factory.BeanCreationException;
 import com.zhy.beans.factory.BeanFactory;
-import com.zhy.beans.util.ClassUtils;
+import com.zhy.util.ClassUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
