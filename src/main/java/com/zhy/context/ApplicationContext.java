@@ -1,8 +1,8 @@
 package com.zhy.context;
 
-import com.zhy.beans.factory.BeanFactory;
+import com.zhy.beans.factory.config.ConfigurableBeanFactory;
 
-public interface ApplicationContext extends BeanFactory {
+public interface ApplicationContext extends ConfigurableBeanFactory {
     @Override
     Object getBean(String beanID);
 }

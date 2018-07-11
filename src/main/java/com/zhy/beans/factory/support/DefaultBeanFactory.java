@@ -4,14 +4,16 @@ import com.zhy.beans.BeanDefinition;
 import com.zhy.beans.BeansException;
 import com.zhy.beans.factory.BeanCreationException;
 import com.zhy.beans.factory.BeanFactory;
+import com.zhy.beans.factory.config.ConfigurableBeanFactory;
 import com.zhy.util.ClassUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private ClassLoader beanClassLoader;
 
     public DefaultBeanFactory() {
 
@@ -33,7 +35,7 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
         if (bd == null) {
             throw new BeansException("类的定义不存在,XML中id定于错误");
         }
-        ClassLoader cl = ClassUtils.getDefaultClassLoader();
+        ClassLoader cl = this.getBeanClassLoader();
         String beanClassName = bd.getBeanClassName();
         try {
             Class<?> clz = cl.loadClass(beanClassName);
@@ -41,5 +43,15 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
         } catch (Exception e) {
             throw new BeanCreationException("创建类是名字写错了：" + beanClassName, e);
         }
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
+    }
+
+    @Override
+    public ClassLoader getBeanClassLoader() {
+        return this.beanClassLoader = (this.beanClassLoader != null ? this.beanClassLoader : ClassUtils.getDefaultClassLoader());
     }
 }
