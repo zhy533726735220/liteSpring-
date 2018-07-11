@@ -4,6 +4,7 @@ import com.zhy.beans.BeanDefinition;
 import com.zhy.beans.factory.BeanDefinitionStoreException;
 import com.zhy.beans.factory.support.BeanDefinitionRegistry;
 import com.zhy.beans.factory.support.GenericBeanDefinition;
+import com.zhy.core.io.Resource;
 import com.zhy.util.ClassUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -24,11 +25,10 @@ public class XmlBeanDefinitionReader {
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry = registry;
     }
-    public void loadBeanDefinitions(String configFile) {
+    public void loadBeanDefinitions(Resource resource) {
         InputStream is = null;
         try {
-            ClassLoader cl = ClassUtils.getDefaultClassLoader();
-            is = cl.getResourceAsStream(configFile);
+            is = resource.getInputStream();
             SAXReader reader = new SAXReader();
             Document doc = reader.read(is);
             // 遍历<beans>标签下的<bean>

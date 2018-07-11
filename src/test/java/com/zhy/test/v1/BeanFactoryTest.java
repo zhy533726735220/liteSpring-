@@ -5,6 +5,8 @@ import com.zhy.beans.factory.BeanCreationException;
 import com.zhy.beans.factory.BeanDefinitionStoreException;
 import com.zhy.beans.factory.xml.XmlBeanDefinitionReader;
 import com.zhy.beans.factory.support.DefaultBeanFactory;
+import com.zhy.core.io.ClassPathResource;
+import com.zhy.core.io.Resource;
 import com.zhy.service.v1.PetStoreService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +24,8 @@ public class BeanFactoryTest {
 
     @Test
     public void testGetBean() {
-        reader.loadBeanDefinitions("petstore-v1.xml");
+        Resource resource = new ClassPathResource("petstore-v1.xml");
+        reader.loadBeanDefinitions(resource);
         BeanDefinition bd = factory.getBeanDefinition("petStore");
         Assert.assertEquals("com.zhy.service.v1.PetStoreService", bd.getBeanClassName());
         PetStoreService petStore = (PetStoreService) factory.getBean("petStore");
@@ -31,7 +34,8 @@ public class BeanFactoryTest {
 
     @Test
     public void testInvalidBean() {
-        reader.loadBeanDefinitions("petstore-v1.xml");
+        Resource resource = new ClassPathResource("petstore-v1.xml");
+        reader.loadBeanDefinitions(resource);
         try {
             factory.getBean("invalidBean");
         }catch (BeanCreationException e) {
@@ -44,7 +48,8 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidXML() {
         try {
-            reader.loadBeanDefinitions("XXX.xml");
+            Resource resource = new ClassPathResource("XXX.xml");
+            reader.loadBeanDefinitions(resource);
         }catch (BeanDefinitionStoreException e) {
             return;
         }

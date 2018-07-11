@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 /**
  * @author zhy
- * 读取文件的接口
+ * 读取文件的接口,把文件变成流
  */
 public interface Resource {
     InputStream getInputStream() throws IOException;
