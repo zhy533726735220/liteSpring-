@@ -27,11 +27,34 @@ public class BeanFactoryTest {
         Resource resource = new ClassPathResource("petstore-v1.xml");
         reader.loadBeanDefinitions(resource);
         BeanDefinition bd = factory.getBeanDefinition("petStore");
+
+        Assert.assertFalse(bd.isSingleton());
+        Assert.assertFalse(bd.isPrototype());
+        Assert.assertEquals(BeanDefinition.SCOPE_DEFAULT, bd.getScope());
+
         Assert.assertEquals("com.zhy.service.v1.PetStoreService", bd.getBeanClassName());
         PetStoreService petStore = (PetStoreService) factory.getBean("petStore");
         Assert.assertNotNull(petStore);
-    }
 
+        PetStoreService petStore1 = (PetStoreService) factory.getBean("petStore");
+        Assert.assertFalse(petStore.equals(petStore1));
+    }
+    @Test
+    public void testGetSingletonBean() {
+        Resource resource = new ClassPathResource("petstore-v1.xml");
+        reader.loadBeanDefinitions(resource);
+        BeanDefinition bd = factory.getBeanDefinition("singletonPetStore");
+
+        Assert.assertTrue(bd.isSingleton());
+        Assert.assertFalse(bd.isPrototype());
+
+        Assert.assertEquals("com.zhy.service.v1.PetStoreService", bd.getBeanClassName());
+        PetStoreService petStore = (PetStoreService) factory.getBean("singletonPetStore");
+        Assert.assertNotNull(petStore);
+
+        PetStoreService petStore1 = (PetStoreService) factory.getBean("singletonPetStore");
+        Assert.assertTrue(petStore.equals(petStore1));
+    }
     @Test
     public void testInvalidBean() {
         Resource resource = new ClassPathResource("petstore-v1.xml");
