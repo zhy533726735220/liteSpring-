@@ -1,5 +1,7 @@
 package com.zhy.beans;
 
+import java.util.List;
+
 /**
  * @author zhy
  * Bean的定义
@@ -16,4 +18,5 @@ public interface BeanDefinition {
     void setScope(String scope);
     String getBeanClassName();
 
+    List<PropertyValue> getPropertyValues();
 }

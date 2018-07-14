@@ -1,6 +1,10 @@
 package com.zhy.beans.factory.support;
 
 import com.zhy.beans.BeanDefinition;
+import com.zhy.beans.PropertyValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenericBeanDefinition implements BeanDefinition {
 
@@ -9,6 +13,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     private boolean singleton = false;
     private boolean prototype = false;
     private String scope = SCOPE_DEFAULT;
+
+    List<PropertyValue> propertyValues = new ArrayList<>();
 
     public GenericBeanDefinition(String beanID, String beanClassName) {
         this.beanID = beanID;
@@ -40,5 +46,10 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public String getBeanClassName() {
         return this.beanClassName;
+    }
+
+    @Override
+    public List<PropertyValue> getPropertyValues() {
+        return this.propertyValues;
     }
 }

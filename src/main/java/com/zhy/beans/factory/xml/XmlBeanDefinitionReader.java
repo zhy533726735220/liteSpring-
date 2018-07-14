@@ -1,10 +1,17 @@
 package com.zhy.beans.factory.xml;
 
 import com.zhy.beans.BeanDefinition;
+import com.zhy.beans.PropertyValue;
 import com.zhy.beans.factory.BeanDefinitionStoreException;
+import com.zhy.beans.factory.config.RuntimeBeanReference;
+import com.zhy.beans.factory.config.TypedStringValue;
 import com.zhy.beans.factory.support.BeanDefinitionRegistry;
 import com.zhy.beans.factory.support.GenericBeanDefinition;
 import com.zhy.core.io.Resource;
+import com.zhy.util.StringUtils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -22,6 +29,14 @@ public class XmlBeanDefinitionReader {
     public static final String ID_ATTRIBUTE = "id";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String SCOPE_ATTRIBUTE = "scope";
+
+    public static final String PROPERTY_ELEMENT = "property";
+
+    public static final String REF_ATTRIBUTE = "ref";
+    public static final String VALUE_ATTRIBUTE = "value";
+    public static final String NAME_ATTRIBUTE = "name";
+
+    protected final Log logger = LogFactory.getLog(getClass());
 
     private BeanDefinitionRegistry registry;
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -44,6 +59,7 @@ public class XmlBeanDefinitionReader {
                 if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
                     bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
                 }
+                parsePropertyElement(ele, bd);
                 this.registry.registerBeanDefinition(id, bd);
             }
         } catch (Exception e) {
@@ -57,6 +73,47 @@ public class XmlBeanDefinitionReader {
                 }
             }
         }
+
     }
+
+    public void parsePropertyElement(Element beanElem, BeanDefinition bd) {
+        Iterator iter = beanElem.elementIterator(PROPERTY_ELEMENT);
+        while (iter.hasNext()) {
+            Element propElem = (Element) iter.next();
+            String propertyName = propElem.attributeValue(NAME_ATTRIBUTE);
+            if(!StringUtils.hasLength(propertyName)) {
+                logger.fatal("标签'property' 必须有属性'name'");
+                return;
+            }
+
+            Object val = parsePropertyValue(propElem, propertyName);
+            PropertyValue pv = new PropertyValue(propertyName, val);
+
+            bd.getPropertyValues().add(pv);
+        }
+    }
+
+    public Object parsePropertyValue(Element ele, String propertyName) {
+
+        String elementName = (propertyName != null) ? "<property> element for property '" + propertyName + "'" : "<constructor-arg> element";
+
+        boolean hasRefAttribute = (ele.attribute(REF_ATTRIBUTE) != null);
+        boolean hasValueAttribute = (ele.attribute(VALUE_ATTRIBUTE) != null);
+
+        if (hasRefAttribute) {
+            String refName = ele.attributeValue(REF_ATTRIBUTE);
+            if (!StringUtils.hasText(refName)) {
+                logger.error(elementName + " contains empty 'ref' attribute");
+            }
+            RuntimeBeanReference ref = new RuntimeBeanReference(refName);
+            return ref;
+        } else if (hasValueAttribute){
+            TypedStringValue valueHolder = new TypedStringValue(ele.attributeValue(VALUE_ATTRIBUTE));
+            return valueHolder;
+        } else {
+            throw new RuntimeException(elementName + " must specify a ref or value");
+        }
+    }
+
 }
 
