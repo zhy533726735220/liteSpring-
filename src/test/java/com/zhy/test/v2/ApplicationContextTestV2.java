@@ -8,6 +8,8 @@ import com.zhy.beans.factory.xml.XmlBeanDefinitionReader;
 import com.zhy.context.ApplicationContext;
 import com.zhy.context.support.ClassPathXmlApplicationContext;
 import com.zhy.core.io.ClassPathResource;
+import com.zhy.dao.v2.AccountDao;
+import com.zhy.dao.v2.ItemDao;
 import com.zhy.service.v2.PetStoreService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,6 +25,12 @@ public class ApplicationContextTestV2 {
 
         Assert.assertNotNull(petStoreService.getAccountDao());
         Assert.assertNotNull(petStoreService.getItemDao());
+
+        Assert.assertNotNull(petStoreService.getItemDao() instanceof ItemDao);
+        Assert.assertNotNull(petStoreService.getAccountDao() instanceof AccountDao);
+
+        Assert.assertEquals("liuxin", petStoreService.getOwner());
+        Assert.assertEquals(2, petStoreService.getVersion());
     }
 
 

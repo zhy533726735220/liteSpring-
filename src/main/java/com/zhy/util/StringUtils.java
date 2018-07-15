@@ -25,4 +25,25 @@ public class StringUtils {
         }
         return false;
     }
+
+    /**
+     * 去掉所有的空格
+     * @param str
+     * @return
+     */
+    public static String trimAllWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str);
+        int index = 0;
+        while (sb.length() > index) {
+            if (Character.isWhitespace(sb.charAt(index))) {
+                sb.deleteCharAt(index);
+            } else {
+                index++;
+            }
+        }
+        return sb.toString();
+    }
 }
