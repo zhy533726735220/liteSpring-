@@ -3,9 +3,11 @@ package com.zhy.beans.factory.support;
 import com.zhy.beans.BeanDefinition;
 import com.zhy.beans.BeansException;
 import com.zhy.beans.PropertyValue;
+import com.zhy.beans.SimpleTypeConverter;
 import com.zhy.beans.factory.BeanCreationException;
 import com.zhy.beans.factory.config.ConfigurableBeanFactory;
 import com.zhy.util.ClassUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.xml.bind.Element;
 import java.beans.BeanInfo;
@@ -83,6 +85,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
             return;
         }
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
+        SimpleTypeConverter converter = new SimpleTypeConverter();
 
         try {
             for (PropertyValue pv : pvs) {
@@ -94,7 +97,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
                 PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
                     if (pd.getName().equals(propertyName)) {
-                        pd.getWriteMethod().invoke(bean, resolveValue);
+                        Object convertedValue = converter.convertIfNecessary(resolveValue, pd.getPropertyType());
+                        pd.getWriteMethod().invoke(bean, convertedValue);
                         break;
                     }
                 }
@@ -107,7 +111,31 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
 
     }
 
+    /**
+     * 使用apache下的commons-beanutils中的BeanUtils.setProperty()方法，自动把对象转换成想要的对象
+     * 省去了SimpleTypeConverter类的转化过程
+     * @param bd
+     * @param bean
+     */
+    private void populateBeanUseCommonBeanUtils(BeanDefinition bd, Object bean) {
+        List<PropertyValue> pvs = bd.getPropertyValues();
 
+        if (pvs == null || pvs.isEmpty()) {
+            return;
+        }
+        BeanDefinitionValueResolver resolver = new BeanDefinitionValueResolver(this);
+        try {
+            for (PropertyValue pv : pvs) {
+                String propertyName = pv.getName();
+                Object originalVale = pv.getValue();
+
+                Object resolvedValue = resolver.resolverValueIfNecessary(originalVale);
+                BeanUtils.setProperty(bean, propertyName, resolvedValue);
+            }
+        } catch (Exception e) {
+            throw new BeanCreationException("Populate bean property failed for [" + bd.getBeanClassName() + "]");
+        }
+    }
 
     @Override
     public void setBeanClassLoader(ClassLoader beanClassLoader) {

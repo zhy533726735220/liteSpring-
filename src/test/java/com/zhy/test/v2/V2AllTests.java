@@ -1,0 +1,12 @@
+package com.zhy.test.v2;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        ApplicationContextTestV2.class, BeanDefinitonTestV2.class, BeanDefinitionValueResolverTest.class,
+        CustomBooleanEditorTest.class, CustomNumberEditorTest.class, CustomNumberEditorTest.class
+})
+public class V2AllTests {
+}
