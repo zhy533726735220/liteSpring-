@@ -1,16 +1,17 @@
 package com.zhy.beans.factory.support;
 
+import com.zhy.beans.factory.BeanFactory;
 import com.zhy.beans.factory.config.RuntimeBeanReference;
 import com.zhy.beans.factory.config.TypedStringValue;
 
 public class BeanDefinitionValueResolver {
-    private final DefaultBeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
-    public BeanDefinitionValueResolver(DefaultBeanFactory beanFactory) {
+    public BeanDefinitionValueResolver(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
-    public Object resolverValueIfNecessary(Object value) {
+    public Object  resolverValueIfNecessary(Object value) {
         if (value instanceof RuntimeBeanReference) {
             RuntimeBeanReference ref = (RuntimeBeanReference) value;
             String refName = ref.getBeanName();

@@ -1,9 +1,6 @@
 package com.zhy.beans.factory.support;
 
-import com.zhy.beans.BeanDefinition;
-import com.zhy.beans.BeansException;
-import com.zhy.beans.PropertyValue;
-import com.zhy.beans.SimpleTypeConverter;
+import com.zhy.beans.*;
 import com.zhy.beans.factory.BeanCreationException;
 import com.zhy.beans.factory.config.ConfigurableBeanFactory;
 import com.zhy.util.ClassUtils;
@@ -69,14 +66,21 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry implements 
      * @return
      */
     private Object instantiateBean(BeanDefinition bd) {
-        ClassLoader cl = this.getBeanClassLoader();
-        String beanClassName = bd.getBeanClassName();
-        try {
-            Class<?> clz = cl.loadClass(beanClassName);
-            return clz.newInstance();
-        } catch (Exception e) {
-            throw new BeanCreationException("创建类是名字写错了：" + beanClassName, e);
+
+        if(bd.hasConstructorArgumentValues()) {
+            ConstructorResolver resolver = new ConstructorResolver(this);
+            return resolver.autowireConstructor(bd);
+        } else {
+            ClassLoader cl = this.getBeanClassLoader();
+            String beanClassName = bd.getBeanClassName();
+            try {
+                Class<?> clz = cl.loadClass(beanClassName);
+                return clz.newInstance();
+            } catch (Exception e) {
+                throw new BeanCreationException("创建类是名字写错了：" + beanClassName, e);
+            }
         }
+
     }
 
     private void populateBean(BeanDefinition bd, Object bean) {

@@ -1,6 +1,7 @@
 package com.zhy.beans.factory.support;
 
 import com.zhy.beans.BeanDefinition;
+import com.zhy.beans.ConstructorArgument;
 import com.zhy.beans.PropertyValue;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     private boolean prototype = false;
     private String scope = SCOPE_DEFAULT;
 
-    List<PropertyValue> propertyValues = new ArrayList<>();
+    private List<PropertyValue> propertyValues = new ArrayList<>();
+    private ConstructorArgument constructorArgument = new ConstructorArgument();
 
     public GenericBeanDefinition(String beanID, String beanClassName) {
         this.beanID = beanID;
@@ -49,7 +51,22 @@ public class GenericBeanDefinition implements BeanDefinition {
     }
 
     @Override
+    public String getID() {
+        return this.beanID;
+    }
+
+    @Override
     public List<PropertyValue> getPropertyValues() {
         return this.propertyValues;
+    }
+
+    @Override
+    public ConstructorArgument getConstructorArgument() {
+        return this.constructorArgument;
+    }
+
+    @Override
+    public boolean hasConstructorArgumentValues() {
+        return !this.constructorArgument.isEmpty();
     }
 }

@@ -1,6 +1,7 @@
 package com.zhy.beans.factory.xml;
 
 import com.zhy.beans.BeanDefinition;
+import com.zhy.beans.ConstructorArgument;
 import com.zhy.beans.PropertyValue;
 import com.zhy.beans.factory.BeanDefinitionStoreException;
 import com.zhy.beans.factory.config.RuntimeBeanReference;
@@ -36,6 +37,8 @@ public class XmlBeanDefinitionReader {
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String NAME_ATTRIBUTE = "name";
 
+    public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
+
     protected final Log logger = LogFactory.getLog(getClass());
 
     private BeanDefinitionRegistry registry;
@@ -59,6 +62,7 @@ public class XmlBeanDefinitionReader {
                 if (ele.attribute(SCOPE_ATTRIBUTE) != null) {
                     bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
                 }
+                parseConstructorArgElements(ele, bd);
                 parsePropertyElement(ele, bd);
                 this.registry.registerBeanDefinition(id, bd);
             }
@@ -74,6 +78,20 @@ public class XmlBeanDefinitionReader {
             }
         }
 
+    }
+
+    public void parseConstructorArgElements(Element beanEle, BeanDefinition bd) {
+        Iterator iter = beanEle.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+        while (iter.hasNext()) {
+            Element ele = (Element) iter.next();
+            parseConstructorArgElement(ele, bd);
+        }
+    }
+
+    public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+        Object value = parsePropertyValue(ele, null);
+        ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder(value);
+        bd.getConstructorArgument().addArgumentValue(valueHolder);
     }
 
     public void parsePropertyElement(Element beanElem, BeanDefinition bd) {
