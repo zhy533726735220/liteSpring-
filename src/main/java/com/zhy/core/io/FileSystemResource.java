@@ -9,8 +9,13 @@ import java.io.InputStream;
 
 public class FileSystemResource implements Resource {
 
-    private String path;
-    private File file;
+    private final String path;
+    private final File file;
+
+    public FileSystemResource(File file) {
+        this.path = file.getPath();
+        this.file = file;
+    }
 
     public FileSystemResource(String path) {
         Assert.notNull(path, "路径不能为空");
@@ -25,6 +30,6 @@ public class FileSystemResource implements Resource {
 
     @Override
     public String getDescription() {
-        return this.file.getAbsolutePath();
+        return "file [" + this.file.getAbsolutePath() + "]";
     }
 }

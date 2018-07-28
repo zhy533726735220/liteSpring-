@@ -6,6 +6,26 @@ import java.util.Map;
 public class ClassUtils {
 
     /**
+     * 包的分隔符'.'
+     */
+    private static final char PACKAGE_SEPARATOR = '.';
+
+    /**
+     * 路径的分隔符
+     */
+    private static final char PATH_SEPARATOR = '/';
+
+    /**
+     * inner class的分隔符
+     */
+    private static final char INNER_CLASS_SEPARATOR = '$';
+
+    /**
+     * CGLIB类的分隔符
+     */
+    public static final String CGLIB_CLASS_SEPARATOR = "$$";
+
+    /**
      * Map with primitive wrapper type as key and corresponding primitive
      * type as value, for example: Integer.class -> int.class.
      */
@@ -84,5 +104,26 @@ public class ClassUtils {
             }
         }
         return false;
+    }
+
+    public static String convertResourcePathToClassName(String resourcePath) {
+        Assert.notNull(resourcePath, "Resource path must not be null");
+        return resourcePath.replace(PATH_SEPARATOR, PACKAGE_SEPARATOR);
+    }
+
+    public static String convertClassNameToResourcePath(String className) {
+        Assert.notNull(className, "Class name must not be null");
+        return className.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
+    }
+
+    public static String getShortName(String className) {
+        int lastDotIndex = className.lastIndexOf(PACKAGE_SEPARATOR);
+        int nameEndIndex = className.indexOf(CGLIB_CLASS_SEPARATOR);
+        if (nameEndIndex == -1) {
+            nameEndIndex = className.length();
+        }
+        String shortName = className.substring(lastDotIndex + 1, nameEndIndex);
+        shortName = shortName.replace(INNER_CLASS_SEPARATOR, PACKAGE_SEPARATOR);
+        return shortName;
     }
 }
